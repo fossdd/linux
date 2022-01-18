@@ -88,7 +88,7 @@ int dwc3_gadget_get_link_state(struct dwc3 *dwc)
  */
 int dwc3_gadget_set_link_state(struct dwc3 *dwc, enum dwc3_link_state state)
 {
-	int		retries = 10000;
+	int		retries = 2000000;
 	u32		reg;
 
 	/*
