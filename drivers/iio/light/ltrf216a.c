@@ -239,32 +239,13 @@ static int ltrf216a_read_data(struct ltrf216a_data *data, u8 addr)
 	return get_unaligned_le24(&buf[0]);
 }
 
-static int ltrf216a_get_lux(struct ltrf216a_data *data)
-{
-	int ret, greendata;
-	u64 lux;
-
-	ret = ltrf216a_set_power_state(data, true);
-	if (ret)
-		return ret;
-
-	greendata = ltrf216a_read_data(data, LTRF216A_ALS_DATA_0);
-	if (greendata < 0)
-		return greendata;
-
-	ltrf216a_set_power_state(data, false);
-
-	lux = greendata * data->info->lux_multiplier * LTRF216A_WIN_FAC;
-
-	return lux;
-}
-
 static int ltrf216a_read_raw(struct iio_dev *indio_dev,
 			     struct iio_chan_spec const *chan, int *val,
 			     int *val2, long mask)
 {
 	struct ltrf216a_data *data = iio_priv(indio_dev);
-	int ret;
+	int ret, greendata;
+	u64 lux, div;
 
 	switch (mask) {
 	case IIO_CHAN_INFO_RAW:
@@ -281,12 +262,18 @@ static int ltrf216a_read_raw(struct iio_dev *indio_dev,
 		return IIO_VAL_INT;
 	case IIO_CHAN_INFO_PROCESSED:
 		mutex_lock(&data->lock);
-		ret = ltrf216a_get_lux(data);
-		mutex_unlock(&data->lock);
-		if (ret < 0)
+		ret = ltrf216a_set_power_state(data, true);
+		if (ret)
 			return ret;
-		*val = ret;
-		*val2 = data->als_gain_fac * data->int_time_fac;
+		greendata = ltrf216a_read_data(data, LTRF216A_ALS_DATA_0);
+		if (greendata < 0)
+			return greendata;
+		ltrf216a_set_power_state(data, false);
+		lux = greendata * 45 * LTRF216A_WIN_FAC;
+		div = data->als_gain_fac * data->int_time_fac;
+		mutex_unlock(&data->lock);
+		*val = lux;
+		*val2 = div;
 		return IIO_VAL_FRACTIONAL;
 	case IIO_CHAN_INFO_INT_TIME:
 		mutex_lock(&data->lock);
