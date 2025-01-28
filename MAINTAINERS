@@ -12439,6 +12439,11 @@ W:	https://linuxtv.org
 T:	git git://linuxtv.org/media.git
 F:	drivers/media/radio/radio-keene*
 
+KERNEL ALPINE LINUX PACKAGING
+M:	Achill Gilgenast <fossdd@pwned.life>
+S:	Maintained
+F:	scripts/package/APKBUILD
+
 KERNEL AUTOMOUNTER
 M:	Ian Kent <raven@themaw.net>
 L:	autofs@vger.kernel.org

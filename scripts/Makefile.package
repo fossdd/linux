@@ -158,6 +158,19 @@ pacman-pkg:
 		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
 		makepkg $(MAKEPKGOPTS)
 
+# apk-pkg
+# ---------------------------------------------------------------------------
+
+PHONY += apk-pkg
+apk-pkg:
+	@ln -srf $(srctree)/scripts/package/APKBUILD $(objtree)/APKBUILD
+	+BUILDDIR="$(realpath $(objtree))" \
+		REPODEST="$(realpath $(objtree))/apk" \
+		CARCH="$(UTS_MACHINE)" \
+		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
+		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
+		abuild $(ABUILDOPTS)
+
 # dir-pkg tar*-pkg - tarball targets
 # ---------------------------------------------------------------------------
 
@@ -239,6 +252,7 @@ help:
 	@echo '  snap-pkg            - Build only the binary kernel snap package'
 	@echo '                        (will connect to external hosts)'
 	@echo '  pacman-pkg          - Build only the binary kernel pacman package'
+	@echo '  apk-pkg             - Build only the binary kernel apk package'
 	@echo '  dir-pkg             - Build the kernel as a plain directory structure'
 	@echo '  tar-pkg             - Build the kernel as an uncompressed tarball'
 	@echo '  targz-pkg           - Build the kernel as a gzip compressed tarball'

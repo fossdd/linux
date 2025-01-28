@@ -100,6 +100,12 @@ modules.order
 /pacman/
 
 #
+# apk files (make apk-pkg)
+#
+/APKBUILD
+/apk/
+
+#
 # We don't want to ignore the following even if they are dot-files
 #
 !.clang-format
