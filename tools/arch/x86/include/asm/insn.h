@@ -7,6 +7,7 @@
  * Copyright (C) IBM Corporation, 2009
  */
 
+#include <linux/compiler.h>
 #include <asm/byteorder.h>
 /* insn_attr_t is defined in inat.h */
 #include "inat.h" /* __ignore_sync_check__ */
